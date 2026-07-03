@@ -160,24 +160,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const frontendRoot = path.join(__dirname, "../frontend");
-const rootLevelFrontend = path.join(__dirname, "..");
-const staticRoot = fs.existsSync(frontendRoot) ? frontendRoot : rootLevelFrontend;
+// Serve the frontend (index.html / admin.html). Works whether your repo keeps them in
+// the same folder as server.js (flat layout) or in a sibling "frontend" folder.
+const candidateDirs = [
+  __dirname,                          // flat layout: index.html next to server.js
+  path.join(__dirname, "frontend"),   // repo/backend/frontend (if backend has its own copy)
+  path.join(__dirname, "../frontend"),// repo/backend/server.js + repo/frontend
+  path.join(__dirname, ".."),         // repo root, one level above backend/
+];
+const staticRoot = candidateDirs.find((dir) => fs.existsSync(path.join(dir, "index.html"))) || __dirname;
+console.log(`Serving frontend from: ${staticRoot}`);
 app.use(express.static(staticRoot));
 
 app.get("/", (req, res, next) => {
-  const indexPath = path.join(staticRoot, "frontend", "index.html");
-  const rootIndexPath = path.join(staticRoot, "index.html");
+  const indexPath = path.join(staticRoot, "index.html");
   if (fs.existsSync(indexPath)) return res.sendFile(indexPath);
-  if (fs.existsSync(rootIndexPath)) return res.sendFile(rootIndexPath);
   next();
 });
 
 app.get("/admin.html", (req, res, next) => {
-  const adminPath = path.join(staticRoot, "frontend", "admin.html");
-  const rootAdminPath = path.join(staticRoot, "admin.html");
+  const adminPath = path.join(staticRoot, "admin.html");
   if (fs.existsSync(adminPath)) return res.sendFile(adminPath);
-  if (fs.existsSync(rootAdminPath)) return res.sendFile(rootAdminPath);
   next();
 });
 

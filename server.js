@@ -18,6 +18,7 @@
 
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
 const path = require("path");
 const { DatabaseSync } = require("node:sqlite");
 
@@ -158,7 +159,27 @@ function requireAdmin(req, res, next) {
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "../frontend")));
+
+const frontendRoot = path.join(__dirname, "../frontend");
+const rootLevelFrontend = path.join(__dirname, "..");
+const staticRoot = fs.existsSync(frontendRoot) ? frontendRoot : rootLevelFrontend;
+app.use(express.static(staticRoot));
+
+app.get("/", (req, res, next) => {
+  const indexPath = path.join(staticRoot, "frontend", "index.html");
+  const rootIndexPath = path.join(staticRoot, "index.html");
+  if (fs.existsSync(indexPath)) return res.sendFile(indexPath);
+  if (fs.existsSync(rootIndexPath)) return res.sendFile(rootIndexPath);
+  next();
+});
+
+app.get("/admin.html", (req, res, next) => {
+  const adminPath = path.join(staticRoot, "frontend", "admin.html");
+  const rootAdminPath = path.join(staticRoot, "admin.html");
+  if (fs.existsSync(adminPath)) return res.sendFile(adminPath);
+  if (fs.existsSync(rootAdminPath)) return res.sendFile(rootAdminPath);
+  next();
+});
 
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, time: new Date().toISOString() });

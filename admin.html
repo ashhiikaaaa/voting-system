@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sanskriti Sangam — Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root{
+    --indigo-deep:   #221546;
+    --indigo-mid:    #3C2170;
+    --marigold:      #FFA630;
+    --saffron:       #FF6F3C;
+    --rose:          #C93F6C;
+    --gold:          #FFD166;
+    --cream:         #FFF6E9;
+    --cream-dim:     #E4D9C8;
+    --ok-green:      #3FB68C;
+    --err-red:       #E4685D;
+
+    --stall-1: #C0392B; --stall-2: #1F6FB2; --stall-3: #E08E0B; --stall-4: #7D3C98;
+    --stall-5: #1F7A4D; --stall-6: #D14D24; --stall-7: #0E7C74; --stall-8: #4C8B2B;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    font-family:'Inter', sans-serif;
+    background:
+      radial-gradient(circle at 12% 6%, rgba(255,166,48,0.20), transparent 40%),
+      radial-gradient(circle at 90% 90%, rgba(201,63,106,0.20), transparent 45%),
+      linear-gradient(160deg, var(--indigo-deep) 0%, var(--indigo-mid) 55%, #2A1858 100%);
+    color:var(--cream); min-height:100vh; position:relative;
+  }
+  body::before{
+    content:""; position:fixed; inset:0;
+    background-image: radial-gradient(rgba(255,214,102,0.09) 1.5px, transparent 1.5px);
+    background-size: 26px 26px; pointer-events:none; z-index:0;
+  }
+  .app{ position:relative; z-index:1; min-height:100vh; }
+  a{ color:inherit; }
+
+  /* ---------- login gate ---------- */
+  .login-wrap{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .login-card{
+    width:100%; max-width:380px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14);
+    border-radius:20px; padding:32px 28px; backdrop-filter:blur(6px);
+  }
+  .login-eyebrow{ font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:8px; }
+  .login-eyebrow .dot{ width:5px; height:5px; border-radius:50%; background:var(--rose); }
+  .login-card h1{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; margin-top:6px; margin-bottom:4px; }
+  .login-card .sub{ font-size:13px; color:var(--cream-dim); margin-bottom:22px; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:6px; }
+  .field input{
+    width:100%; padding:11px 13px; border-radius:10px; border:1px solid rgba(255,255,255,0.18);
+    background:rgba(0,0,0,0.22); color:var(--cream); font-family:'Inter',sans-serif; font-size:14.5px; outline:none;
+  }
+  .field input:focus{ border-color:var(--gold); }
+  .login-error{ color:var(--err-red); font-size:12.5px; font-family:'JetBrains Mono',monospace; margin-bottom:14px; min-height:16px; }
+
+  .btn{ padding:12px 16px; border-radius:10px; border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:700; font-size:14px; transition:transform .12s ease, filter .12s ease; }
+  .btn:active{ transform:scale(0.97); }
+  .btn:disabled{ opacity:0.55; cursor:not-allowed; }
+  .btn-primary{ width:100%; background:linear-gradient(90deg, var(--marigold), var(--rose)); color:#fff; }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn-secondary{ background:rgba(255,255,255,0.08); color:var(--cream); border:1px solid rgba(255,255,255,0.2); }
+  .btn-secondary:hover{ background:rgba(255,255,255,0.14); }
+  .btn-danger{ background:rgba(201,63,106,0.18); color:#ffb4c8; border:1px solid rgba(201,63,106,0.5); }
+  .btn-danger:hover{ background:rgba(201,63,106,0.28); }
+
+  /* ---------- dashboard shell ---------- */
+  header{ display:flex; align-items:center; justify-content:space-between; gap:20px; padding:26px 30px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand .mark{
+    width:44px; height:44px; border-radius:50%; border:1.5px dashed rgba(255,246,233,0.4);
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--cream-dim); flex-shrink:0;
+  }
+  .brand h1{ font-family:'Fraunces', serif; font-weight:700; font-size:21px; line-height:1.2; }
+  .brand .tag{ font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
+  .header-actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .live-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(63,182,140,0.15); border:1px solid rgba(63,182,140,0.4);
+    color:var(--ok-green); padding:5px 11px; border-radius:100px; font-weight:600; letter-spacing:0.05em;
+    font-family:'JetBrains Mono', monospace; font-size:11.5px;
+  }
+  .live-pill.offline{ background:rgba(228,104,93,0.15); border-color:rgba(228,104,93,0.45); color:var(--err-red); }
+  .live-pill .blip{ width:6px; height:6px; border-radius:50%; background:currentColor; animation:pulse 1.6s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+
+  /* ---------- ticker (signature element) ---------- */
+  .ticker{
+    margin:0 30px 22px; border-radius:14px; overflow:hidden; position:relative;
+    background:rgba(0,0,0,0.24); border:1px solid rgba(255,255,255,0.1);
+    display:flex; align-items:stretch;
+  }
+  .ticker .label{
+    flex-shrink:0; display:flex; align-items:center; gap:8px; padding:0 16px;
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--indigo-deep); background:var(--gold); white-space:nowrap;
+  }
+  .ticker .track-wrap{ flex:1; overflow:hidden; position:relative; }
+  .ticker .track{ display:flex; gap:36px; padding:0 24px; white-space:nowrap; animation:scroll-left 26s linear infinite; align-items:center; height:100%; min-height:38px; }
+  .ticker .track span.item{ font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--cream-dim); }
+  .ticker .track span.item b{ color:var(--cream); }
+  @keyframes scroll-left{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  .ticker.empty .track{ animation:none; }
+
+  main{ padding:0 30px 40px; }
+
+  /* stat strip */
+  .stats{ display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin-bottom:26px; }
+  @media (max-width:760px){ .stats{ grid-template-columns:1fr 1fr; } }
+  .stat-card{ background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:16px 18px; }
+  .stat-card .k{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--cream-dim); }
+  .stat-card .v{ font-family:'Fraunces',serif; font-size:28px; margin-top:4px; line-height:1.2; }
+  .stat-card .v.small{ font-size:18px; }
+  .stat-card .sub{ font-size:11.5px; color:var(--cream-dim); margin-top:2px; }
+
+  /* two column layout */
+  .cols{ display:grid; grid-template-columns:1.3fr 1fr; gap:20px; align-items:start; }
+  @media (max-width:900px){ .cols{ grid-template-columns:1fr; } }
+
+  .panel{ background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:20px 22px 22px; }
+  .panel h2{ font-family:'Fraunces',serif; font-size:18px; margin-bottom:2px; }
+  .panel .panel-sub{ font-size:12px; color:var(--cream-dim); margin-bottom:16px; }
+
+  .leader-row{ display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.07); }
+  .leader-row:last-child{ border-bottom:none; }
+  .leader-row .rank{ width:22px; flex-shrink:0; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--cream-dim); text-align:center; }
+  .leader-row.top1 .rank{ color:var(--gold); font-weight:700; }
+  .leader-row .name{ width:120px; flex-shrink:0; font-size:13.5px; }
+  .leader-row .bar-track{ flex:1; height:9px; border-radius:6px; background:rgba(255,255,255,0.08); overflow:hidden; }
+  .leader-row .bar-fill{ height:100%; border-radius:6px; background:linear-gradient(90deg,var(--marigold),var(--rose)); transition:width .4s ease; }
+  .leader-row .count{ width:36px; flex-shrink:0; text-align:right; font-family:'JetBrains Mono',monospace; font-size:12.5px; }
+
+  .feed{ display:flex; flex-direction:column; gap:2px; max-height:360px; overflow-y:auto; }
+  .feed-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 10px; border-radius:8px; }
+  .feed-row:nth-child(odd){ background:rgba(0,0,0,0.14); }
+  .feed-row .fname{ font-size:13px; display:flex; align-items:center; gap:8px; }
+  .feed-row .swatch{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .feed-row .ftime{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--cream-dim); flex-shrink:0; }
+  .empty-note{ font-size:12.5px; color:var(--cream-dim); font-family:'JetBrains Mono',monospace; padding:10px 0; }
+
+  .actions-panel{ margin-top:20px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  .actions-panel .btn{ font-size:13px; padding:10px 16px; }
+  .actions-panel .sep{ flex:1; }
+  .action-note{ width:100%; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--cream-dim); margin-top:2px; }
+
+  ::-webkit-scrollbar{ width:8px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.15); border-radius:8px; }
+
+  .loading{ text-align:center; padding:80px 20px; color:var(--cream-dim); font-family:'JetBrains Mono',monospace; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="loading">Loading…</div>
+</div>
+
+<script>
+(function(){
+  // =========================================================================
+  // CONFIG — use the same origin as the page, so admin and API can be deployed
+  // together from one host.
+  // =========================================================================
+  const API_BASE = window.location.origin;
+  const ADMIN_USER = "admin";
+  const ADMIN_PASSWORD = "sanskriti2026";
+
+  const STALL_COLOR_VARS = ["--stall-1","--stall-2","--stall-3","--stall-4","--stall-5","--stall-6","--stall-7","--stall-8"];
+
+  const auth = "Basic " + btoa(`${ADMIN_USER}:${ADMIN_PASSWORD}`);
+  let summary = null;       // last successful /api/admin/summary payload
+  let connected = false;
+  let authFailed = false;
+  let pollTimer = null;
+
+  const app = document.getElementById('app');
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function authHeader(){ return { Authorization: auth }; }
+  function stallColorVar(i){ return `var(${STALL_COLOR_VARS[i % STALL_COLOR_VARS.length]})`; }
+
+  function fmtTime(iso){
+    try{
+      const d = new Date(iso);
+      return d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    }catch(e){ return iso; }
+  }
+  function fmtClock(iso){
+    try{
+      const d = new Date(iso);
+      return d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+    }catch(e){ return iso; }
+  }
+
+  // ---------- data ----------
+  async function fetchSummary(){
+    try{
+      const res = await fetch(`${API_BASE}/api/admin/summary`, { headers: authHeader() });
+      if(res.status === 401){ authFailed = true; connected = false; render(); return; }
+      if(!res.ok) throw new Error("bad response");
+      summary = await res.json();
+      connected = true;
+      authFailed = false;
+    }catch(e){
+      connected = false;
+    }
+    render();
+  }
+
+  function startPolling(){
+    if(pollTimer) return;
+    pollTimer = setInterval(fetchSummary, 4000);
+  }
+
+  async function resetVotes(){
+    if(!confirm("Reset all votes to zero? This cannot be undone.")) return;
+    try{
+      const res = await fetch(`${API_BASE}/api/admin/reset`, { method:"POST", headers: authHeader() });
+      if(res.status === 401){ authFailed = true; render(); return; }
+      summary = await res.json();
+      render();
+    }catch(e){ alert("Could not reset votes — check the backend connection."); }
+  }
+
+  async function downloadCsv(path, filename){
+    try{
+      const res = await fetch(`${API_BASE}${path}`, { headers: authHeader() });
+      if(res.status === 401){ authFailed = true; render(); return; }
+      if(!res.ok) throw new Error("export failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }catch(e){ alert("Could not export CSV — check the backend connection."); }
+  }
+
+  // ---------- render ----------
+  function render(){
+    if(authFailed){ renderAuthError(); return; }
+    if(!summary){ app.innerHTML = `<div class="loading">Loading results…</div>`; return; }
+    renderDashboard();
+  }
+
+  function renderAuthError(){
+    app.innerHTML = `
+      <div class="login-wrap">
+        <div class="login-card">
+          <div class="login-eyebrow"><span class="dot"></span>Sanskriti Sangam<span class="dot"></span></div>
+          <h1>Can't Connect</h1>
+          <div class="sub">The backend rejected the admin credentials configured at the top of this file. Update ADMIN_USER / ADMIN_PASSWORD in admin.html to match the server's env vars, then reload.</div>
+          <button class="btn btn-primary" id="retryBtn">Retry</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('retryBtn').onclick = () => { authFailed = false; fetchSummary(); };
+  }
+
+  function renderDashboard(){
+    const stalls = [...summary.stalls].sort((a,b) => b.votes - a.votes);
+    const leadingName = summary.leading ? summary.leading.name : null;
+
+    const leaderRows = stalls.map((s, i) => {
+      const origIdx = summary.stalls.findIndex(x => x.name === s.name);
+      const max = Math.max(1, ...stalls.map(x => x.votes));
+      const pct = Math.round((s.votes / max) * 100);
+      return `
+        <div class="leader-row ${i===0 && s.votes>0 ? 'top1' : ''}">
+          <div class="rank">${i===0 && s.votes>0 ? '🏆' : i+1}</div>
+          <div class="name">${escapeHtml(s.name)}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:linear-gradient(90deg, ${stallColorVar(origIdx)}, var(--rose));"></div></div>
+          <div class="count">${s.votes}</div>
+        </div>
+      `;
+    }).join("");
+
+    const recent = summary.recent || [];
+    const feedRows = recent.length ? recent.map(r => {
+      const idx = summary.stalls.findIndex(x => x.name === r.stall);
+      return `
+        <div class="feed-row">
+          <div class="fname"><span class="swatch" style="background:${stallColorVar(idx)}"></span>${escapeHtml(r.stall)}</div>
+          <div class="ftime">${fmtTime(r.time)}</div>
+        </div>
+      `;
+    }).join("") : `<div class="empty-note">No votes cast yet.</div>`;
+
+    const tickerItems = recent.slice(0, 12).map(r => `<span class="item"><b>${escapeHtml(r.stall)}</b> · ${fmtClock(r.time)}</span>`);
+    const tickerHtml = tickerItems.length
+      ? [...tickerItems, ...tickerItems].join('<span class="item">•</span>')
+      : "";
+
+    app.innerHTML = `
+      <header>
+        <div class="brand">
+          <div class="mark">ADMIN</div>
+          <div>
+            <div class="tag">Sanskriti Sangam</div>
+            <h1>People's Choice — Admin Dashboard</h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span class="live-pill ${connected ? '' : 'offline'}"><span class="blip"></span>${connected ? 'LIVE' : 'RECONNECTING…'}</span>
+        </div>
+      </header>
+
+      <div class="ticker ${recent.length ? '' : 'empty'}">
+        <div class="label">Latest votes</div>
+        <div class="track-wrap"><div class="track">${tickerHtml || '<span class="item">Waiting for the first vote of the day…</span>'}</div></div>
+      </div>
+
+      <main>
+        <div class="stats">
+          <div class="stat-card"><div class="k">Total Votes</div><div class="v">${summary.total}</div></div>
+          <div class="stat-card"><div class="k">Leading Stall</div><div class="v small">${leadingName ? escapeHtml(leadingName) : '—'}</div><div class="sub">${summary.leading ? summary.leading.votes + ' votes' : 'No votes yet'}</div></div>
+          <div class="stat-card"><div class="k">Stalls</div><div class="v">${stalls.length}</div></div>
+          <div class="stat-card"><div class="k">Last Vote</div><div class="v small">${recent.length ? fmtClock(recent[0].time) : '—'}</div><div class="sub">${recent.length ? escapeHtml(recent[0].stall) : 'No activity yet'}</div></div>
+        </div>
+
+        <div class="cols">
+          <div class="panel">
+            <h2>Leaderboard</h2>
+            <div class="panel-sub">Ranked by votes, updates live</div>
+            ${leaderRows}
+
+            <div class="actions-panel">
+              <button class="btn btn-secondary" id="exportSummaryBtn">Export Vote Counts (CSV)</button>
+              <button class="btn btn-secondary" id="exportLogBtn">Export Full Vote Log (CSV)</button>
+              <div class="sep"></div>
+              <button class="btn btn-danger" id="resetBtn">Reset All Votes</button>
+              <div class="action-note">Resetting clears every vote permanently — export a CSV first if you need a record.</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Recent Activity</h2>
+            <div class="panel-sub">Most recent votes across all stalls</div>
+            <div class="feed">${feedRows}</div>
+          </div>
+        </div>
+      </main>
+    `;
+
+    document.getElementById('resetBtn').onclick = resetVotes;
+    document.getElementById('exportSummaryBtn').onclick = () => downloadCsv('/api/admin/export.csv', 'sanskriti-sangam-votes.csv');
+    document.getElementById('exportLogBtn').onclick = () => downloadCsv('/api/admin/export-log.csv', 'sanskriti-sangam-vote-log.csv');
+  }
+
+  render();
+  fetchSummary();
+  startPolling();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sanskriti Sangam — People's Choice Award</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root{
+    --indigo-deep:   #221546;
+    --indigo-mid:    #3C2170;
+    --marigold:      #FFA630;
+    --saffron:       #FF6F3C;
+    --rose:          #C93F6C;
+    --gold:          #FFD166;
+    --cream:         #FFF6E9;
+    --cream-dim:     #E4D9C8;
+    --ok-green:      #3FB68C;
+    --err-red:       #E4685D;
+
+    --stall-1: #C0392B; --stall-2: #1F6FB2; --stall-3: #E08E0B; --stall-4: #7D3C98;
+    --stall-5: #1F7A4D; --stall-6: #D14D24; --stall-7: #0E7C74; --stall-8: #4C8B2B;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    font-family:'Inter', sans-serif;
+    background:
+      radial-gradient(circle at 15% 8%, rgba(255,166,48,0.25), transparent 40%),
+      radial-gradient(circle at 88% 85%, rgba(201,63,106,0.25), transparent 45%),
+      linear-gradient(160deg, var(--indigo-deep) 0%, var(--indigo-mid) 55%, #2A1858 100%);
+    color:var(--cream); min-height:100vh; overflow-x:hidden; position:relative;
+  }
+  body::before{
+    content:""; position:fixed; inset:0;
+    background-image: radial-gradient(rgba(255,214,102,0.10) 1.5px, transparent 1.5px);
+    background-size: 26px 26px; pointer-events:none; z-index:0;
+  }
+  .app{ position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; }
+
+  header{ display:flex; align-items:center; justify-content:center; gap:28px; padding:34px 24px 18px; text-align:center; }
+  .logo-slot{
+    width:64px; height:64px; border-radius:50%; border:1.5px dashed rgba(255,246,233,0.45);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.04em;
+    color:var(--cream-dim); background:rgba(255,255,255,0.04); flex-shrink:0; user-select:none;
+  }
+  .title-block{ max-width:560px; }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--gold); display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .eyebrow .dot{ width:5px; height:5px; border-radius:50%; background:var(--rose); }
+  h1{
+    font-family:'Fraunces', serif; font-weight:700; font-size:clamp(28px, 4.4vw, 44px); line-height:1.28; margin-top:6px; padding-bottom:0.12em;
+    background:linear-gradient(90deg, var(--cream) 30%, var(--gold) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .subtitle{ margin-top:8px; font-size:14.5px; color:var(--cream-dim); }
+
+  .status-strip{
+    display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--cream-dim); padding-bottom:14px;
+  }
+  .live-pill{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(63,182,140,0.15); border:1px solid rgba(63,182,140,0.4);
+    color:var(--ok-green); padding:4px 10px; border-radius:100px; font-weight:600; letter-spacing:0.05em;
+  }
+  .live-pill.offline{ background:rgba(228,104,93,0.15); border-color:rgba(228,104,93,0.45); color:var(--err-red); }
+  .live-pill .blip{ width:6px; height:6px; border-radius:50%; background:currentColor; animation:pulse 1.6s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+
+  main{ flex:1; padding:10px 24px 40px; display:flex; flex-direction:column; align-items:center; }
+  .instruction{ font-size:13px; color:var(--cream-dim); margin-bottom:18px; font-family:'JetBrains Mono', monospace; letter-spacing:0.03em; }
+
+  .grid{ display:grid; grid-template-columns:repeat(4, minmax(150px,1fr)); gap:16px; width:100%; max-width:980px; }
+  @media (max-width:820px){ .grid{ grid-template-columns:repeat(2, 1fr); } }
+
+  .card{
+    position:relative; aspect-ratio:1/1; border-radius:18px; border:none; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:20px 14px; color:var(--cream); overflow:hidden; transition:transform .18s ease, box-shadow .18s ease; box-shadow:0 6px 18px rgba(0,0,0,0.28);
+  }
+  .card:active{ transform:scale(0.96); }
+  .card:hover{ transform:translateY(-4px); box-shadow:0 12px 26px rgba(0,0,0,0.35); }
+  .card::before{ content:""; position:absolute; inset:0; background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.22), transparent 55%); }
+  .card .glyph{ font-size:52px; margin-bottom:14px; filter:drop-shadow(0 3px 6px rgba(0,0,0,0.35)); }
+  .card .tap-hint{ position:absolute; top:10px; left:12px; font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:0.08em; color:rgba(255,255,255,0.55); }
+  .card .vote-badge{
+    position:absolute; top:8px; right:8px;
+    background:rgba(0,0,0,0.32); border:1px solid rgba(255,255,255,0.25);
+    border-radius:100px; padding:3px 9px;
+    font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; color:var(--gold);
+    display:flex; align-items:center; gap:4px;
+  }
+  .card .vote-badge .n{ color:var(--cream); }
+  .card .stall-name{
+    font-family:'Fraunces', serif; font-weight:700; font-size:20px; line-height:1.24; text-align:center;
+  }
+  .card .state-label{
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--gold); margin-top:8px; text-align:center; opacity:0.95;
+  }
+
+  .card[data-slot="0"]{ background:linear-gradient(155deg, var(--stall-1), #7a2018); }
+  .card[data-slot="1"]{ background:linear-gradient(155deg, var(--stall-2), #123f66); }
+  .card[data-slot="2"]{ background:linear-gradient(155deg, var(--stall-3), #8a5606); }
+  .card[data-slot="3"]{ background:linear-gradient(155deg, var(--stall-4), #4b2359); }
+  .card[data-slot="4"]{ background:linear-gradient(155deg, var(--stall-5), #123d28); }
+  .card[data-slot="5"]{ background:linear-gradient(155deg, var(--stall-6), #7a2c11); }
+  .card[data-slot="6"]{ background:linear-gradient(155deg, var(--stall-7), #094440); }
+  .card[data-slot="7"]{ background:linear-gradient(155deg, var(--stall-8), #2b4f18); }
+
+  .confirm-wrap{ flex:1; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .confirm-card{
+    width:100%; max-width:460px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14);
+    border-radius:22px; padding:32px 28px 28px; text-align:center; backdrop-filter:blur(6px);
+  }
+  .confirm-eyebrow{ font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+  .confirm-stall{ border-radius:16px; padding:34px 20px; margin-bottom:20px; color:var(--cream); box-shadow:0 10px 26px rgba(0,0,0,0.35); }
+  .confirm-stall .glyph{ font-size:46px; display:block; margin-bottom:10px; }
+  .confirm-stall .name{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; }
+  .confirm-stall .state{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold); margin-top:8px; }
+  .confirm-copy{ font-size:14px; color:var(--cream-dim); margin-bottom:24px; line-height:1.6; }
+  .confirm-copy b{ color:var(--cream); }
+  .error-msg{ color:var(--err-red); font-size:13px; margin-bottom:14px; font-family:'JetBrains Mono',monospace; }
+
+  .btn-row{ display:flex; gap:12px; }
+  .btn{ flex:1; padding:14px 16px; border-radius:12px; border:none; cursor:pointer; font-family:'Inter',sans-serif; font-weight:700; font-size:15px; transition:transform .12s ease, filter .12s ease; }
+  .btn:active{ transform:scale(0.97); }
+  .btn:disabled{ opacity:0.6; cursor:not-allowed; }
+  .btn-primary{ background:linear-gradient(90deg, var(--marigold), var(--rose)); color:#fff; }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn-secondary{ background:rgba(255,255,255,0.08); color:var(--cream); border:1px solid rgba(255,255,255,0.2); }
+  .btn-secondary:hover{ background:rgba(255,255,255,0.14); }
+
+  .thankyou{ padding:8px 0 2px; }
+  .thankyou .check{
+    width:56px; height:56px; border-radius:50%; background:rgba(63,182,140,0.15); border:1.5px solid var(--ok-green);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:26px; color:var(--ok-green);
+  }
+  .thankyou h2{ font-family:'Fraunces', serif; font-size:24px; margin-bottom:8px; }
+  .thankyou p{ font-size:13.5px; color:var(--cream-dim); }
+  .countdown-bar{ margin-top:20px; height:4px; border-radius:4px; background:rgba(255,255,255,0.1); overflow:hidden; }
+  .countdown-bar > div{ height:100%; width:100%; background:var(--gold); transform-origin:left; animation:shrink 5s linear forwards; }
+  @keyframes shrink{ from{ transform:scaleX(1);} to{ transform:scaleX(0);} }
+
+  footer{ text-align:center; padding:14px 20px 22px; font-family:'JetBrains Mono', monospace; font-size:10.5px; color:rgba(255,246,233,0.35); letter-spacing:0.04em; user-select:none; }
+
+  .thankyou-overlay{
+    position:fixed; inset:0; z-index:200; padding:24px;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(circle at 15% 8%, rgba(255,166,48,0.25), transparent 40%),
+      radial-gradient(circle at 88% 85%, rgba(201,63,106,0.25), transparent 45%),
+      linear-gradient(160deg, var(--indigo-deep) 0%, var(--indigo-mid) 55%, #2A1858 100%);
+  }
+
+  .loading{ text-align:center; padding:60px 20px; color:var(--cream-dim); font-family:'JetBrains Mono',monospace; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="loading" id="loading">Connecting to voting server…</div>
+</div>
+
+<script>
+(function(){
+  // =========================================================================
+  // CONFIG — use the same origin as the page, so the voting app and API
+  // can be deployed together from one host.
+  // =========================================================================
+  const API_BASE = window.location.origin;
+
+  // Each stall's stylized display name (must match the "name" values seeded
+  // in server.js's DEFAULT_STALLS) mapped to an emoji and to the actual state
+  // it represents — shown as the small caption under the name on each card.
+  const GLYPHS = {
+    "Rangeelo Rajasthan": "🏰",
+    "Himadri": "🏔️",
+    "Jannat-e-Jammu & Kashmir": "🌷",
+    "Soul of Bengal": "🐅",
+    "Rangrez Gujarat": "🦁",
+    "Andaz-e-Haryana": "🌾",
+    "Devbhoomi Uttarakhand": "⛰️",
+    "Viraasat-e-Uttar Pradesh": "🕌",
+  };
+  const STATE_LABELS = {
+    "Rangeelo Rajasthan": "Rajasthan",
+    "Himadri": "Himachal Pradesh",
+    "Jannat-e-Jammu & Kashmir": "Jammu and Kashmir",
+    "Soul of Bengal": "Bengal",
+    "Rangrez Gujarat": "Gujarat",
+    "Andaz-e-Haryana": "Haryana",
+    "Devbhoomi Uttarakhand": "Uttarakhand",
+    "Viraasat-e-Uttar Pradesh": "Uttar Pradesh",
+  };
+  const FALLBACK_GLYPHS = ["🎪","🎨","🪔","🎶","🥁","🧵","🏺","🌺"];
+
+  let state = {
+    view: "home",       // 'home' | 'confirm' | 'thankyou'
+    stalls: [],          // [{name, votes}]
+    total: 0,
+    connected: false,
+    selected: null,
+    thankYouName: null,
+    submitting: false,
+    submitted: false,
+    error: null,
+  };
+
+  let thankYouTimer = null;
+  let pollTimer = null;
+  const app = document.getElementById('app');
+
+  function glyphFor(name, idx){ return GLYPHS[name] || FALLBACK_GLYPHS[idx % FALLBACK_GLYPHS.length]; }
+  function stateLabelFor(name){ return STATE_LABELS[name] || ""; }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ---------- backend connection: SSE (live push) with polling fallback ----------
+  function connect(){
+    fetchStalls(); // initial snapshot
+
+    try{
+      const es = new EventSource(`${API_BASE}/api/stream`);
+      es.addEventListener('update', (e) => {
+        const data = JSON.parse(e.data);
+        state.stalls = data.stalls;
+        state.total = data.total;
+        state.connected = true;
+        render();
+      });
+      es.onerror = () => {
+        state.connected = false;
+        render();
+        // EventSource auto-reconnects on its own; keep a light poll as backup too.
+      };
+      es.onopen = () => { state.connected = true; render(); };
+    }catch(e){
+      // SSE unsupported/blocked — fall back to polling every 3s.
+      startPolling();
+    }
+
+    // Backup poll in case SSE silently drops (covers flaky networks / proxies).
+    startPolling();
+  }
+
+  function startPolling(){
+    if(pollTimer) return;
+    pollTimer = setInterval(fetchStalls, 3000);
+  }
+
+  async function fetchStalls(){
+    try{
+      const res = await fetch(`${API_BASE}/api/stalls`);
+      if(!res.ok) throw new Error("bad response");
+      const data = await res.json();
+      state.stalls = data.stalls;
+      state.total = data.total;
+      state.connected = true;
+      state.error = null;
+    }catch(e){
+      state.connected = false;
+      state.error = "Can't reach the voting server. Check that the backend is running and API_BASE is set correctly.";
+    }
+    render();
+  }
+
+  async function submitVote(){
+    if(state.submitting || state.submitted) return;
+    state.submitting = true; state.error = null;
+    render();
+    try{
+      const res = await fetch(`${API_BASE}/api/vote`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ stall: state.selected })
+      });
+      if(!res.ok) throw new Error("vote failed");
+      const data = await res.json();
+      state.stalls = data.stalls;
+      state.total = data.total;
+      state.submitting = false;
+      state.submitted = true;
+      state.thankYouName = state.selected;
+      state.view = "thankyou";
+      startThankYouTimer();
+      render();
+    }catch(e){
+      state.submitting = false;
+      state.error = "Couldn't submit your vote — please try again.";
+      render();
+    }
+  }
+
+  function startThankYouTimer(){
+    if(thankYouTimer){ clearTimeout(thankYouTimer); thankYouTimer = null; }
+    thankYouTimer = setTimeout(() => {
+      thankYouTimer = null;
+      goHome();
+    }, 5000);
+  }
+
+  function goHome(){
+    state.view = "home";
+    state.selected = null;
+    state.thankYouName = null;
+    state.submitting = false;
+    state.submitted = false;
+    state.error = null;
+    if(thankYouTimer){ clearTimeout(thankYouTimer); thankYouTimer = null; }
+    render();
+  }
+
+  function selectStall(name){
+    state.selected = name; state.view = "confirm"; state.submitted = false; state.error = null;
+    render();
+  }
+
+  function votesFor(name){
+    const s = state.stalls.find(s => s.name === name);
+    return s ? s.votes : 0;
+  }
+
+  function render(){
+    if(state.view === "home") renderHome();
+    else if(state.view === "confirm") renderConfirm();
+    else if(state.view === "thankyou") renderThankYou();
+  }
+
+  function renderHome(){
+    const cards = state.stalls.map((s, i) => `
+      <button class="card" data-slot="${i % 8}" onclick="__vote_selectStall('${s.name.replace(/'/g,"\\'")}')">
+        <span class="tap-hint">TAP TO VOTE</span>
+        <span class="vote-badge">🗳 <span class="n">${s.votes}</span></span>
+        <span class="glyph">${glyphFor(s.name, i)}</span>
+        <span class="stall-name">${escapeHtml(s.name)}</span>
+        <span class="state-label">${escapeHtml(stateLabelFor(s.name))}</span>
+      </button>
+    `).join("");
+
+    app.innerHTML = `
+      <header>
+        <div class="logo-slot">LOGO&nbsp;1</div>
+        <div class="title-block">
+          <div class="eyebrow"><span class="dot"></span>People's Choice Award<span class="dot"></span></div>
+          <h1>Sanskriti Sangam</h1>
+          <div class="subtitle">Tap your favourite state stall to cast your vote</div>
+        </div>
+        <div class="logo-slot">LOGO&nbsp;2</div>
+      </header>
+
+      <div class="status-strip">
+        <span class="live-pill ${state.connected ? '' : 'offline'}"><span class="blip"></span>${state.connected ? 'LIVE VOTING' : 'RECONNECTING…'}</span>
+        <span>·</span>
+        <span>${state.total} vote${state.total===1?'':'s'} cast so far</span>
+      </div>
+
+      <main>
+        <div class="instruction">Select a stall below to cast your vote</div>
+        ${state.error ? `<div class="error-msg">${escapeHtml(state.error)}</div>` : ""}
+        <div class="grid">${cards}</div>
+      </main>
+
+      <footer>Origen Systems — Sanskriti Sangam Voting Platform</footer>
+    `;
+  }
+
+  function renderConfirm(){
+    const idx = state.stalls.findIndex(s => s.name === state.selected);
+    const glyph = glyphFor(state.selected, idx < 0 ? 0 : idx);
+    const slot = (idx < 0 ? 0 : idx) % 8;
+    const stateLabel = stateLabelFor(state.selected);
+
+    app.innerHTML = `
+      <div class="confirm-wrap">
+        <div class="confirm-card">
+          <div class="confirm-eyebrow">People's Choice Award — Confirm Selection</div>
+          <div class="confirm-stall" style="background:linear-gradient(155deg, var(--stall-${slot+1}), rgba(0,0,0,0.35));">
+            <span class="glyph">${glyph}</span>
+            <span class="name">${escapeHtml(state.selected)}</span>
+            ${stateLabel ? `<div class="state">${escapeHtml(stateLabel)}</div>` : ""}
+          </div>
+          <div class="confirm-copy">You are voting for the <b>${escapeHtml(state.selected)}</b> state stall.<br>Please confirm to submit your vote.</div>
+          ${state.error ? `<div class="error-msg">${escapeHtml(state.error)}</div>` : ""}
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="__vote_goHome()" ${state.submitting?'disabled':''}>Cancel</button>
+            <button class="btn btn-primary" onclick="__vote_submit()" ${state.submitting?'disabled':''}>${state.submitting ? 'Submitting…' : 'Submit Vote'}</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderThankYou(){
+    const name = state.thankYouName || state.selected || "your selection";
+    const stateLabel = stateLabelFor(name);
+
+    app.innerHTML = `
+      <div class="thankyou-overlay">
+        <div class="confirm-card">
+          <div class="thankyou">
+            <div class="check">✓</div>
+            <h2>Thank you!</h2>
+            <p>Your vote for <b>${escapeHtml(name)}</b>${stateLabel ? ` (${escapeHtml(stateLabel)})` : ""} has been recorded.</p>
+            <div class="countdown-bar"><div></div></div>
+            <p style="margin-top:10px;">Returning to the home screen…</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ---------- exposed handlers ----------
+  window.__vote_selectStall = (name) => selectStall(name);
+  window.__vote_goHome = () => goHome();
+  window.__vote_submit = () => submitVote();
+
+  connect();
+})();
+</script>
+</body>
+</html>

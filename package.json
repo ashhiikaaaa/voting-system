@@ -1,0 +1,14 @@
+{
+  "name": "sanskriti-sangam-voting-backend",
+  "version": "1.0.0",
+  "description": "Backend API for the Sanskriti Sangam People's Choice Award voting platform",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
